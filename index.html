@@ -1,0 +1,1982 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Entertainment Archive - Personal Vault</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amber: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        libBg: '#faf9f6',
+                        libCard: '#ffffff',
+                        libBorder: '#e2e8f0',
+                        libText: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- JSZip for ZIP Export/Import/Backup -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #faf9f6;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Custom Animated Built-in Tags */
+        .tag-nostalgia {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+            box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4);
+        }
+        .tag-masterpiece {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24, #d97706);
+            color: white;
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.5);
+            animation: pulseGlow 2.5s infinite ease-in-out;
+        }
+        .tag-superb {
+            background: linear-gradient(135deg, #ef4444, #f43f5e);
+            color: white;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+            animation: pulseRed 2.5s infinite ease-in-out;
+        }
+        .tag-legendary {
+            background: linear-gradient(135deg, #f97316, #eab308);
+            color: white;
+            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+        }
+        .tag-great {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 4px 18px rgba(251, 191, 36, 0.8); }
+        }
+        @keyframes pulseRed {
+            0%, 100% { box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 4px 16px rgba(244, 63, 94, 0.7); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-amber-200">
+
+    <!-- Top Navigation App Bar -->
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 py-3 shadow-sm">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-white shadow-md shadow-amber-500/30">
+                    <i class="fa-solid fa-vault text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg leading-tight tracking-tight text-slate-800">ArchiveVault</h1>
+                    <p class="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Personal Entertainment Archive</p>
+                </div>
+            </div>
+
+            <!-- Header Action Items -->
+            <div class="flex items-center space-x-2">
+                <button onclick="openSettingsModal()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-all active:scale-95 flex items-center gap-1.5 text-xs font-semibold">
+                    <i class="fa-solid fa-gear text-sm"></i>
+                    <span class="hidden sm:inline">Settings</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-1 flex flex-col">
+
+        <!-- VIEW 1: HOMEPAGE -->
+        <section id="view-home" class="space-y-6">
+            <!-- Hero Stats Banner -->
+            <div class="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 rounded-3xl p-6 text-white shadow-xl shadow-amber-600/20 relative overflow-hidden">
+                <div class="absolute -right-8 -bottom-8 opacity-10 text-9xl text-white pointer-events-none">
+                    <i class="fa-solid fa-film"></i>
+                </div>
+                <div class="relative z-10 max-w-xl">
+                    <span class="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold text-amber-50 mb-3">
+                        <i class="fa-solid fa-shield-halved mr-1"></i> 100% Offline & Private
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Your Legacy Media Archive</h2>
+                    <p class="text-xs sm:text-sm text-amber-100 mt-1">Preserving your favorite games, films, series, literature, and music for future generations.</p>
+                    <div class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-slate-800 font-bold text-sm shadow">
+                        <i class="fa-solid fa-database text-amber-600"></i>
+                        <span>Total Archived Entries: <strong id="stat-total-count" class="text-amber-600 text-base">0</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6 Main Category Grid -->
+            <div>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4 px-1 flex items-center justify-between">
+                    <span>Categories</span>
+                    <span class="text-xs text-slate-400 font-normal">Select a category to view library</span>
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- 1. Games Card -->
+                    <div onclick="navigateTo('library', 'games')" class="group cursor-pointer bg-white rounded-2xl p-5 border border-slate-200 hover:border-amber-400 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-gamepad"></i>
+                            </div>
+                            <span id="cat-count-games" class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs">0 entries</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mt-4 group-hover:text-amber-600 transition-colors">Games</h4>
+                        <p class="text-xs text-slate-500 mt-1">Mobile, PC, and Console video games.</p>
+                        <div class="mt-3 pt-3 border-t border-slate-100 flex gap-2 text-[11px] font-medium text-slate-400">
+                            <span>• Mobile</span> <span>• PC</span> <span>• Console</span>
+                        </div>
+                    </div>
+
+                    <!-- 2. Movies Card -->
+                    <div onclick="navigateTo('library', 'movies')" class="group cursor-pointer bg-white rounded-2xl p-5 border border-slate-200 hover:border-amber-400 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-film"></i>
+                            </div>
+                            <span id="cat-count-movies" class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs">0 entries</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mt-4 group-hover:text-amber-600 transition-colors">Movies</h4>
+                        <p class="text-xs text-slate-500 mt-1">Feature films and animated cinema.</p>
+                        <div class="mt-3 pt-3 border-t border-slate-100 flex gap-2 text-[11px] font-medium text-slate-400">
+                            <span>• Movies</span> <span>• Anime Movies</span>
+                        </div>
+                    </div>
+
+                    <!-- 3. Anime Card -->
+                    <div onclick="navigateTo('library', 'anime')" class="group cursor-pointer bg-white rounded-2xl p-5 border border-slate-200 hover:border-amber-400 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-tv"></i>
+                            </div>
+                            <span id="cat-count-anime" class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs">0 entries</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mt-4 group-hover:text-amber-600 transition-colors">Anime</h4>
+                        <p class="text-xs text-slate-500 mt-1">Japanese animated television series and OVAs.</p>
+                        <div class="mt-3 pt-3 border-t border-slate-100 flex gap-2 text-[11px] font-medium text-slate-400">
+                            <span>• TV Series</span> <span>• OVAs / ONAs</span>
+                        </div>
+                    </div>
+
+                    <!-- 4. Series Card -->
+                    <div onclick="navigateTo('library', 'series')" class="group cursor-pointer bg-white rounded-2xl p-5 border border-slate-200 hover:border-amber-400 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-clapperboard"></i>
+                            </div>
+                            <span id="cat-count-series" class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs">0 entries</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mt-4 group-hover:text-amber-600 transition-colors">Series</h4>
+                        <p class="text-xs text-slate-500 mt-1">Live-action television shows and mini-series.</p>
+                        <div class="mt-3 pt-3 border-t border-slate-100 flex gap-2 text-[11px] font-medium text-slate-400">
+                            <span>• TV Shows</span> <span>• Documentaries</span>
+                        </div>
+                    </div>
+
+                    <!-- 5. Manga / Manhua / Manhwa Card -->
+                    <div onclick="navigateTo('library', 'manga')" class="group cursor-pointer bg-white rounded-2xl p-5 border border-slate-200 hover:border-amber-400 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-book-open"></i>
+                            </div>
+                            <span id="cat-count-manga" class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs">0 entries</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mt-4 group-hover:text-amber-600 transition-colors">Manga / Manhua / Manhwa</h4>
+                        <p class="text-xs text-slate-500 mt-1">Asian graphic novels, webtoons, and comics.</p>
+                        <div class="mt-3 pt-3 border-t border-slate-100 flex gap-2 text-[11px] font-medium text-slate-400">
+                            <span>• Manga</span> <span>• Manhua</span> <span>• Manhwa</span>
+                        </div>
+                    </div>
+
+                    <!-- 6. Music / Songs Card -->
+                    <div onclick="navigateTo('library', 'music')" class="group cursor-pointer bg-white rounded-2xl p-5 border border-slate-200 hover:border-amber-400 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-music"></i>
+                            </div>
+                            <span id="cat-count-music" class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs">0 entries</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mt-4 group-hover:text-amber-600 transition-colors">Music / Songs</h4>
+                        <p class="text-xs text-slate-500 mt-1">Songs, soundtracks, and audio tracks.</p>
+                        <div class="mt-3 pt-3 border-t border-slate-100 flex gap-2 text-[11px] font-medium text-slate-400">
+                            <span>• Tracks</span> <span>• Languages</span> <span>• Timings</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: CATEGORY LIBRARY (SEARCH, FILTER & LIST) -->
+        <section id="view-library" class="hidden space-y-5">
+            <!-- Header bar for Category Library -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center space-x-3">
+                    <button onclick="navigateTo('home')" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h2 id="libraryCategoryTitle" class="text-xl font-extrabold text-slate-800 capitalize">Category Library</h2>
+                        <p id="libraryCategorySub" class="text-xs text-slate-400">Showing local archives</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleFilterPanel()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-filter text-amber-600"></i>
+                        <span>Filters & Sorting</span>
+                        <span id="activeFilterBadge" class="hidden w-2 h-2 rounded-full bg-amber-500"></span>
+                    </button>
+                    <button onclick="openAddEntryModal()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs flex items-center gap-2 shadow-md shadow-amber-600/20 active:scale-95 transition-all">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add Entry</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Specific Search Bar -->
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="categorySearchInput" oninput="applyFiltersAndSearch()" placeholder="Search in this category..." 
+                       class="w-full pl-11 pr-4 py-3 rounded-2xl bg-white border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-sm shadow-sm transition-all">
+            </div>
+
+            <!-- Collapsible Category Filter Panel -->
+            <div id="filterPanel" class="hidden bg-white p-5 rounded-2xl border border-slate-200 shadow-md space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-amber-600"></i> Category Filters & Sorting
+                    </h4>
+                    <button onclick="resetCategoryFilters()" class="text-xs font-bold text-amber-700 hover:text-amber-800 transition-colors">
+                        <i class="fa-solid fa-rotate-left mr-1"></i>Reset Filters
+                    </button>
+                </div>
+
+                <!-- Category Specific Filters Container -->
+                <div id="filterControlsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                    <!-- Dynamic Controls populated via JS -->
+                </div>
+            </div>
+
+            <!-- Active Filter Badges -->
+            <div id="activeFilterTags" class="flex flex-wrap gap-2 text-xs"></div>
+
+            <!-- Library Entries Container Grid -->
+            <div id="libraryContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <!-- Entries Rendered Here -->
+            </div>
+
+            <!-- Empty Library State -->
+            <div id="libraryEmptyState" class="hidden flex flex-col items-center justify-center text-center p-12 bg-white rounded-2xl border border-dashed border-slate-300 my-4">
+                <div class="w-16 h-16 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-2xl mb-3">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h4 class="font-bold text-slate-800 text-base">No Entries Found</h4>
+                <p class="text-xs text-slate-400 mt-1 max-w-sm">No items match your search or filter criteria in this category. Try clearing filters or adding a new entry.</p>
+            </div>
+        </section>
+
+        <!-- VIEW 3: DETAIL PAGE -->
+        <section id="view-detail" class="hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <button onclick="navigateBackToLibrary()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold flex items-center gap-2 transition-all shadow-sm">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Back</span>
+                    </button>
+                    <!-- Detail View Previous / Next Navigation Buttons -->
+                    <button onclick="navigateDetailEntry(-1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold transition-all shadow-sm">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button onclick="navigateDetailEntry(1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold transition-all shadow-sm">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <button id="editEntryBtn" onclick="openEditModal()" class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-semibold flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                    </button>
+                    <button id="deleteEntryBtn" onclick="moveToRecycleBinCurrent()" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-trash-can"></i> Delete
+                    </button>
+                </div>
+            </div>
+
+            <!-- Full Information Layout -->
+            <div id="detailContentContainer" class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+                <!-- Detail View Content dynamically injected -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Mobile Navigation Bar -->
+    <nav class="sticky bottom-0 z-30 bg-white border-t border-slate-200 px-4 py-2 sm:hidden">
+        <div class="flex justify-around items-center">
+            <button onclick="navigateTo('home')" class="flex flex-col items-center text-amber-600">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Home</span>
+            </button>
+            <button onclick="openSettingsModal()" class="flex flex-col items-center text-slate-400 hover:text-amber-600">
+                <i class="fa-solid fa-sliders text-lg"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Settings</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MODAL 1: ADD / EDIT ENTRY FORM MODAL -->
+    <div id="entryModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 flex flex-col">
+            <!-- Modal Header -->
+            <div class="sticky top-0 bg-white px-6 py-4 border-b border-slate-100 flex items-center justify-between z-10">
+                <h3 id="modalFormTitle" class="font-extrabold text-lg text-slate-800">Add Archive Entry</h3>
+                <button onclick="closeEntryModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form Body -->
+            <form id="archiveForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4 text-xs">
+                <!-- Category and Subcategory Pickers -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Category <span class="text-rose-500">*</span></label>
+                        <select id="formCategory" onchange="onCategoryFormChange()" class="w-full p-3 rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:border-amber-500 font-medium">
+                            <option value="games">Games</option>
+                            <option value="movies">Movies</option>
+                            <option value="anime">Anime</option>
+                            <option value="series">Series</option>
+                            <option value="manga">Manga / Manhua / Manhwa</option>
+                            <option value="music">Music / Songs</option>
+                        </select>
+                    </div>
+
+                    <div id="subcategoryContainer">
+                        <label class="block font-bold text-slate-700 mb-1">Subcategory</label>
+                        <select id="formSubcategory" class="w-full p-3 rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:border-amber-500 font-medium">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Mandatory Official Title -->
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Official Title <span class="text-rose-500">*</span></label>
+                    <input type="text" id="formTitle" required placeholder="Enter exact title..." 
+                           class="w-full p-3 rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:border-amber-500 font-medium text-sm">
+                </div>
+
+                <!-- Dynamic Category Metadata Fields -->
+                <div id="dynamicFormFields" class="space-y-4 pt-2 border-t border-slate-100">
+                    <!-- Fields injected according to category specification -->
+                </div>
+
+                <!-- Cover Image Uploader -->
+                <div id="imageUploadSection" class="pt-2 border-t border-slate-100">
+                    <label class="block font-bold text-slate-700 mb-1">Cover Image (Local File)</label>
+                    <div class="flex items-center gap-4">
+                        <div id="imagePreviewBox" class="w-20 h-24 rounded-xl border border-dashed border-slate-300 bg-slate-50 flex flex-col items-center justify-center text-slate-400 overflow-hidden relative">
+                            <i class="fa-solid fa-image text-xl"></i>
+                            <span class="text-[9px] mt-1">No image</span>
+                        </div>
+                        <div class="flex-1">
+                            <input type="file" id="formImageInput" accept="image/*" onchange="previewSelectedImage(event)" class="hidden">
+                            <button type="button" onclick="document.getElementById('formImageInput').click()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-200">
+                                Choose Local Image
+                            </button>
+                            <button type="button" id="clearImageBtn" onclick="clearSelectedImage()" class="hidden ml-2 px-3 py-2 rounded-xl bg-rose-50 text-rose-600 font-semibold text-xs border border-rose-200">
+                                Remove
+                            </button>
+                            <p class="text-[10px] text-slate-400 mt-1">Stored safely inside your offline local database.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button Bar -->
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
+                    <button type="button" onclick="closeEntryModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold">Cancel</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold shadow-md shadow-amber-600/20">
+                        <i class="fa-solid fa-floppy-disk mr-1.5"></i> Save Entry
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: SETTINGS & DATA MANAGEMENT MODAL -->
+    <div id="settingsModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="font-extrabold text-lg text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-amber-600"></i> Settings & Management
+                </h3>
+                <button onclick="closeSettingsModal()" aria-label="Close Settings" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 flex items-center justify-center transition-all text-base font-bold">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6 text-xs">
+                <!-- 1. Backup & Restore -->
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-database text-amber-600"></i> Backup & Restore
+                    </h4>
+                    <p class="text-slate-500">Create full system backups (ZIP format) or restore prior safety snapshots.</p>
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <button onclick="triggerFullBackup()" class="px-4 py-2 rounded-xl bg-amber-600 text-white font-bold flex items-center gap-1.5 shadow">
+                            <i class="fa-solid fa-download"></i> Create Full Backup
+                        </button>
+                        <input type="file" id="restoreFileInput" accept=".zip" onchange="handleRestoreFile(event)" class="hidden">
+                        <button onclick="document.getElementById('restoreFileInput').click()" class="px-4 py-2 rounded-xl bg-white text-slate-700 font-bold border border-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-upload"></i> Restore Backup
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Export & Import -->
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-file-export text-emerald-600"></i> Export & Import Archives
+                    </h4>
+                    <p class="text-slate-500">Export whole library collections or import ZIP packages with automatic duplicate skipping.</p>
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <button onclick="triggerCategoryExport()" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold flex items-center gap-1.5 shadow">
+                            <i class="fa-solid fa-file-arrow-down"></i> Export Library ZIP
+                        </button>
+                        <input type="file" id="importFileInput" accept=".zip" onchange="handleImportFile(event)" class="hidden">
+                        <button onclick="document.getElementById('importFileInput').click()" class="px-4 py-2 rounded-xl bg-white text-slate-700 font-bold border border-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-arrow-up"></i> Import Archive ZIP
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Recycle Bin -->
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-trash-can text-rose-600"></i> Recycle Bin
+                        </h4>
+                        <span id="recycleBinBadge" class="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 font-bold text-[10px]">0 items</span>
+                    </div>
+                    <p class="text-slate-500">View deleted items retained indefinitely. Restore or permanently erase records.</p>
+                    <button onclick="openRecycleBinView()" class="px-4 py-2 rounded-xl bg-slate-800 text-white font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-dumpster"></i> Manage Recycle Bin
+                    </button>
+                </div>
+
+                <!-- 4. Application Information -->
+                <div class="p-4 rounded-2xl bg-amber-50/50 border border-amber-200/60 text-[11px] text-slate-600 space-y-1">
+                    <p><strong>Application:</strong> Personal Entertainment Archive (Android API 26+ Compatible)</p>
+                    <p><strong>Version:</strong> 1.0.0 (Production Release)</p>
+                    <p><strong>Developer:</strong> Archive Vault Systems (Standalone Offline Build)</p>
+                </div>
+
+                <!-- Bottom Modal Close Button -->
+                <div class="pt-2 flex justify-end">
+                    <button onclick="closeSettingsModal()" class="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs shadow-md transition-all">
+                        Done / Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: RECYCLE BIN VIEW MODAL -->
+    <div id="recycleBinModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="font-extrabold text-lg text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-trash-can text-rose-600"></i> Recycle Bin Storage
+                </h3>
+                <button onclick="closeRecycleBinModal()" aria-label="Close Recycle Bin" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-all font-bold">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="recycleBinListContainer" class="p-6 overflow-y-auto flex-1 space-y-3 text-xs">
+                <!-- Items list rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: PERMANENT DELETE CONFIRMATION MODAL -->
+    <div id="deleteConfirmModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4">
+            <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 mx-auto flex items-center justify-center text-xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <h4 class="font-extrabold text-slate-800 text-base">Permanently Delete?</h4>
+                <p class="text-xs text-slate-500 mt-1">This action cannot be undone. The entry will be permanently erased from your database.</p>
+            </div>
+            <div class="flex gap-2 justify-center pt-2">
+                <button onclick="closeDeleteConfirmModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs">Cancel</button>
+                <button id="confirmDeleteActionBtn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md shadow-rose-600/20">Delete Forever</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APPLICATION LOGIC & ARCHITECTURE -->
+    <script>
+        /* ==========================================================================
+           1. PREDEFINED GENRE CATALOGUES & TAXONOMY
+           ========================================================================== */
+        const GENRE_CATALOGUES = {
+            games: ["Action", "Adventure", "RPG", "Strategy", "Simulation", "Sports", "Racing", "Puzzle", "Platformer", "Shooter", "Survival", "Horror", "Fighting", "Open World"],
+            movies: ["Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller", "Western"],
+            anime: ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Isekai", "Mecha", "Mystery", "Romance", "Sci-Fi", "Slice of Life", "Sports", "Supernatural"],
+            series: ["Action", "Adventure", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Horror", "Mystery", "Sci-Fi", "Thriller"],
+            manga: ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Isekai", "Martial Arts", "Mystery", "Psychological", "Romance", "Sci-Fi", "Slice of Life", "Supernatural"],
+            manhua: ["Action", "Adventure", "Cultivation", "Fantasy", "Harem", "Martial Arts", "Reincarnation", "Romance", "System", "Urban"],
+            manhwa: ["Action", "Adventure", "Dungeon", "Fantasy", "Martial Arts", "Necromancy", "Reincarnation", "Romance", "System", "Tower"],
+            music: []
+        };
+
+        const BUILTIN_TAGS = [
+            { id: 'Nostalgia', label: 'Nostalgia', cssClass: 'tag-nostalgia' },
+            { id: 'Masterpiece', label: 'Masterpiece', cssClass: 'tag-masterpiece' },
+            { id: 'Superb', label: 'Superb', cssClass: 'tag-superb' },
+            { id: 'Legendary', label: 'Legendary', cssClass: 'tag-legendary' },
+            { id: 'Great', label: 'Great', cssClass: 'tag-great' }
+        ];
+
+        /* ==========================================================================
+           2. INDEXEDDB DATABASE LAYER (LOCAL PERSISTENCE)
+           ========================================================================== */
+        const DB_NAME = "ArchiveVaultDB";
+        const DB_VERSION = 1;
+        let db = null;
+
+        function initDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = (e) => {
+                    const dbInstance = e.target.result;
+                    if (!dbInstance.objectStoreNames.contains("entries")) {
+                        const store = dbInstance.createObjectStore("entries", { keyPath: "id" });
+                        store.createIndex("category", "category", { unique: false });
+                        store.createIndex("deleted", "deleted", { unique: false });
+                    }
+                };
+                request.onsuccess = (e) => {
+                    db = e.target.result;
+                    resolve(db);
+                };
+                request.onerror = (e) => reject("Failed to open local IndexedDB store");
+            });
+        }
+
+        function dbGetAllEntries() {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction("entries", "readonly");
+                const store = tx.objectStore("entries");
+                const req = store.getAll();
+                req.onsuccess = () => resolve(req.result || []);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function dbSaveEntry(entry) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction("entries", "readwrite");
+                const store = tx.objectStore("entries");
+                const req = store.put(entry);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function dbDeleteEntry(id) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction("entries", "readwrite");
+                const store = tx.objectStore("entries");
+                const req = store.delete(id);
+                req.onsuccess = () => resolve();
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function dbClearAllEntries() {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction("entries", "readwrite");
+                const store = tx.objectStore("entries");
+                const req = store.clear();
+                req.onsuccess = () => resolve();
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        /* ==========================================================================
+           3. APPLICATION STATE & ROUTING
+           ========================================================================== */
+        let state = {
+            currentView: 'home',
+            currentCategory: null,
+            currentEntryId: null,
+            currentFilteredEntries: [],
+            allEntries: [],
+            selectedImageBlob: null,
+            editingEntryId: null,
+            pendingDeleteId: null,
+            filters: {
+                search: '',
+                genres: [],
+                genreMode: 'UNION',
+                tag: '',
+                sortField: 'releaseDate',
+                sortOrder: 'desc',
+                ageRating: '',
+                maxRuntime: '',
+                singleMulti: '',
+                onlineOffline: '',
+                language: ''
+            }
+        };
+
+        window.onload = async function() {
+            await initDatabase();
+            await reloadState();
+            setupSwipeAndKeyNavigation();
+            navigateTo('home');
+        };
+
+        async function reloadState() {
+            state.allEntries = await dbGetAllEntries();
+            updateDashboardCounts();
+        }
+
+        function updateDashboardCounts() {
+            const activeEntries = state.allEntries.filter(e => !e.deleted);
+            document.getElementById('stat-total-count').textContent = activeEntries.length;
+
+            const categories = ['games', 'movies', 'anime', 'series', 'manga', 'music'];
+            categories.forEach(cat => {
+                const count = activeEntries.filter(e => e.category === cat).length;
+                const el = document.getElementById(`cat-count-${cat}`);
+                if (el) el.textContent = `${count} entries`;
+            });
+
+            const deletedCount = state.allEntries.filter(e => e.deleted).length;
+            document.getElementById('recycleBinBadge').textContent = `${deletedCount} items`;
+        }
+
+        function navigateTo(view, category = null) {
+            state.currentView = view;
+            if (category) state.currentCategory = category;
+
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-library').classList.add('hidden');
+            document.getElementById('view-detail').classList.add('hidden');
+
+            if (view === 'home') {
+                document.getElementById('view-home').classList.remove('hidden');
+                updateDashboardCounts();
+            } else if (view === 'library') {
+                document.getElementById('view-library').classList.remove('hidden');
+                setupLibraryCategoryView();
+            } else if (view === 'detail') {
+                document.getElementById('view-detail').classList.remove('hidden');
+                renderDetailView();
+            }
+        }
+
+        function navigateBackToLibrary() {
+            navigateTo('library', state.currentCategory);
+        }
+
+        /* ==========================================================================
+           4. CATEGORY LIBRARY & FILTERING ENGINE
+           ========================================================================== */
+        function setupLibraryCategoryView() {
+            const titles = {
+                games: 'Games Library',
+                movies: 'Movies & Cinema Library',
+                anime: 'Anime Series Library',
+                series: 'TV Series Library',
+                manga: 'Manga / Manhua / Manhwa Vault',
+                music: 'Music & Audio Songs'
+            };
+            document.getElementById('libraryCategoryTitle').textContent = titles[state.currentCategory] || 'Library';
+            document.getElementById('categorySearchInput').value = '';
+            
+            resetCategoryFilters(false);
+            buildFilterControls();
+            applyFiltersAndSearch();
+        }
+
+        function toggleFilterPanel() {
+            const panel = document.getElementById('filterPanel');
+            panel.classList.toggle('hidden');
+        }
+
+        function resetCategoryFilters(shouldReapply = true) {
+            state.filters = {
+                search: document.getElementById('categorySearchInput').value || '',
+                genres: [],
+                genreMode: 'UNION',
+                tag: '',
+                sortField: state.currentCategory === 'music' ? 'timestamp' : 'releaseDate',
+                sortOrder: 'desc',
+                ageRating: '',
+                maxRuntime: '',
+                singleMulti: '',
+                onlineOffline: '',
+                language: ''
+            };
+            if (shouldReapply) {
+                buildFilterControls();
+                applyFiltersAndSearch();
+            }
+        }
+
+        function buildFilterControls() {
+            const container = document.getElementById('filterControlsContainer');
+            const cat = state.currentCategory;
+            let html = '';
+
+            const isNumericSort = cat !== 'music' && ['rating', 'ageRating', 'installationSize', 'completionTime', 'runtime', 'seasons', 'episodes', 'chapters', 'duration'].includes(state.filters.sortField);
+
+            html += `
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Sort Order</label>
+                    <select onchange="updateFilterState('sortOrder', this.value)" class="w-full p-2.5 rounded-xl border border-slate-200 font-medium">
+                        ${isNumericSort ? `
+                            <option value="desc" ${state.filters.sortOrder === 'desc' ? 'selected' : ''}>Highest First</option>
+                            <option value="asc" ${state.filters.sortOrder === 'asc' ? 'selected' : ''}>Lowest First</option>
+                        ` : `
+                            <option value="desc" ${state.filters.sortOrder === 'desc' ? 'selected' : ''}>Newest First (Default)</option>
+                            <option value="asc" ${state.filters.sortOrder === 'asc' ? 'selected' : ''}>Oldest First</option>
+                        `}
+                    </select>
+                </div>
+            `;
+
+            let sortOptions = '';
+            if (cat === 'games') {
+                sortOptions += `<option value="releaseDate" ${state.filters.sortField === 'releaseDate' ? 'selected' : ''}>Release Date</option>`;
+                sortOptions += `
+                    <option value="rating" ${state.filters.sortField === 'rating' ? 'selected' : ''}>Personal Rating</option>
+                    <option value="ageRating" ${state.filters.sortField === 'ageRating' ? 'selected' : ''}>Age Rating</option>
+                    <option value="installationSize" ${state.filters.sortField === 'installationSize' ? 'selected' : ''}>Installation Size (MB/GB)</option>
+                    <option value="completionTime" ${state.filters.sortField === 'completionTime' ? 'selected' : ''}>Completion Time (Hours/Mins)</option>
+                `;
+            } else if (cat === 'movies') {
+                sortOptions += `<option value="releaseDate" ${state.filters.sortField === 'releaseDate' ? 'selected' : ''}>Release Date</option>`;
+                sortOptions += `
+                    <option value="rating" ${state.filters.sortField === 'rating' ? 'selected' : ''}>Personal Rating</option>
+                    <option value="ageRating" ${state.filters.sortField === 'ageRating' ? 'selected' : ''}>Age Rating</option>
+                    <option value="runtime" ${state.filters.sortField === 'runtime' ? 'selected' : ''}>Runtime</option>
+                `;
+            } else if (cat === 'anime' || cat === 'series') {
+                sortOptions += `<option value="releaseDate" ${state.filters.sortField === 'releaseDate' ? 'selected' : ''}>Release Date</option>`;
+                sortOptions += `
+                    <option value="rating" ${state.filters.sortField === 'rating' ? 'selected' : ''}>Personal Rating</option>
+                    <option value="ageRating" ${state.filters.sortField === 'ageRating' ? 'selected' : ''}>Age Rating</option>
+                    <option value="seasons" ${state.filters.sortField === 'seasons' ? 'selected' : ''}>Seasons</option>
+                    <option value="episodes" ${state.filters.sortField === 'episodes' ? 'selected' : ''}>Episodes</option>
+                `;
+            } else if (cat === 'manga') {
+                sortOptions += `<option value="releaseDate" ${state.filters.sortField === 'releaseDate' ? 'selected' : ''}>Release Date</option>`;
+                sortOptions += `
+                    <option value="rating" ${state.filters.sortField === 'rating' ? 'selected' : ''}>Personal Rating</option>
+                    <option value="ageRating" ${state.filters.sortField === 'ageRating' ? 'selected' : ''}>Age Rating</option>
+                    <option value="chapters" ${state.filters.sortField === 'chapters' ? 'selected' : ''}>Chapters</option>
+                `;
+            }
+
+            if (sortOptions !== '') {
+                html += `
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Sort By Property</label>
+                        <select onchange="updateSortProperty(this.value)" class="w-full p-2.5 rounded-xl border border-slate-200 font-medium">
+                            ${sortOptions}
+                        </select>
+                    </div>
+                `;
+            }
+
+            if (cat !== 'music') {
+                html += `
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Max Age Rating Filter</label>
+                        <input type="number" placeholder="e.g. 18" value="${state.filters.ageRating}" oninput="updateFilterState('ageRating', this.value)" class="w-full p-2.5 rounded-xl border border-slate-200 font-medium">
+                    </div>
+                `;
+            }
+
+            if (cat === 'movies') {
+                html += `
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Max Runtime (Minutes)</label>
+                        <input type="number" placeholder="e.g. 120" value="${state.filters.maxRuntime}" oninput="updateFilterState('maxRuntime', this.value)" class="w-full p-2.5 rounded-xl border border-slate-200 font-medium">
+                    </div>
+                `;
+            }
+
+            if (cat !== 'music') {
+                html += `
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Built-in Tag Filter</label>
+                        <select onchange="updateFilterState('tag', this.value)" class="w-full p-2.5 rounded-xl border border-slate-200 font-medium">
+                            <option value="">All Tags</option>
+                            ${BUILTIN_TAGS.map(t => `<option value="${t.id}" ${state.filters.tag === t.id ? 'selected' : ''}>${t.label}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+
+            if (cat !== 'music') {
+                const rawGenres = cat === 'manga' ? [...GENRE_CATALOGUES.manga, ...GENRE_CATALOGUES.manhua, ...GENRE_CATALOGUES.manhwa] : GENRE_CATALOGUES[cat] || [];
+                const genres = [...new Set(rawGenres)];
+
+                html += `
+                    <div class="md:col-span-2">
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="font-bold text-slate-700">Genres Selection</label>
+                            <div class="space-x-2 text-[10px]">
+                                <label class="cursor-pointer"><input type="radio" name="gMode" value="UNION" ${state.filters.genreMode === 'UNION' ? 'checked' : ''} onchange="updateFilterState('genreMode', 'UNION')"> UNION (OR)</label>
+                                <label class="cursor-pointer"><input type="radio" name="gMode" value="INTERSECTION" ${state.filters.genreMode === 'INTERSECTION' ? 'checked' : ''} onchange="updateFilterState('genreMode', 'INTERSECTION')"> INTERSECTION (AND)</label>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 p-2 bg-slate-50 rounded-xl border border-slate-200 max-h-28 overflow-y-auto">
+                            ${genres.map(g => `
+                                <button type="button" onclick="toggleGenreFilter('${g}')" class="px-2 py-1 rounded-lg text-[10px] font-semibold border ${state.filters.genres.includes(g) ? 'bg-amber-600 text-white border-amber-600' : 'bg-white text-slate-600 border-slate-200'}">
+                                    ${g}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (cat === 'games') {
+                html += `
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Mode Filter</label>
+                        <select onchange="updateFilterState('singleMulti', this.value)" class="w-full p-2.5 rounded-xl border border-slate-200 font-medium">
+                            <option value="">All Modes</option>
+                            <option value="Single-player">Single-player</option>
+                            <option value="Multiplayer">Multiplayer</option>
+                            <option value="Both">Both</option>
+                        </select>
+                    </div>
+                `;
+            } else if (cat === 'music') {
+                html += `
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Filter by Language</label>
+                        <input type="text" placeholder="Type language (e.g. English, Japanese)..." value="${escapeHtml(state.filters.language)}" oninput="updateFilterState('language', this.value)" class="w-full p-2.5 rounded-xl border border-slate-200 font-medium">
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function updateFilterState(key, val) {
+            state.filters[key] = val;
+            applyFiltersAndSearch();
+        }
+
+        function updateSortProperty(val) {
+            state.filters.sortField = val;
+            buildFilterControls();
+            applyFiltersAndSearch();
+        }
+
+        function parseInstallationSizeToMB(sizeStr) {
+            if (!sizeStr) return 0;
+            const str = String(sizeStr).trim().toLowerCase();
+            const val = parseFloat(str) || 0;
+            if (str.includes('gb')) return val * 1024;
+            return val;
+        }
+
+        function parseCompletionTimeToHours(timeStr) {
+            if (!timeStr) return 0;
+            const str = String(timeStr).trim().toLowerCase();
+            const val = parseFloat(str) || 0;
+            if (str.includes('m') && !str.includes('h')) return val / 60;
+            return val;
+        }
+
+        function parseRuntimeToMinutes(runtimeStr) {
+            if (!runtimeStr) return 0;
+            const str = String(runtimeStr).trim().toLowerCase();
+            let totalMins = 0;
+            
+            const hoursMatch = str.match(/(\d+)\s*h/);
+            const minsMatch = str.match(/(\d+)\s*m/);
+
+            if (hoursMatch) totalMins += parseInt(hoursMatch[1], 10) * 60;
+            if (minsMatch) totalMins += parseInt(minsMatch[1], 10);
+
+            if (!hoursMatch && !minsMatch) {
+                totalMins = parseFloat(str) || 0;
+            }
+            return totalMins;
+        }
+
+        function toggleGenreFilter(genre) {
+            const idx = state.filters.genres.indexOf(genre);
+            if (idx > -1) state.filters.genres.splice(idx, 1);
+            else state.filters.genres.push(genre);
+            buildFilterControls();
+            applyFiltersAndSearch();
+        }
+
+        function applyFiltersAndSearch() {
+            const searchQuery = document.getElementById('categorySearchInput').value.trim().toLowerCase();
+            const cat = state.currentCategory;
+
+            let filtered = state.allEntries.filter(e => !e.deleted && e.category === cat);
+
+            if (searchQuery) {
+                filtered = filtered.filter(e => {
+                    const title = (e.title || '').toLowerCase();
+                    const synopsis = (e.synopsis || '').toLowerCase();
+                    const genres = (e.genres || []).join(' ').toLowerCase();
+
+                    if (cat === 'games') {
+                        return title.includes(searchQuery) || (e.developer || '').toLowerCase().includes(searchQuery) || synopsis.includes(searchQuery) || genres.includes(searchQuery);
+                    } else if (cat === 'movies') {
+                        return title.includes(searchQuery) || (e.director || '').toLowerCase().includes(searchQuery) || synopsis.includes(searchQuery) || genres.includes(searchQuery);
+                    } else if (cat === 'anime' || cat === 'series') {
+                        return title.includes(searchQuery) || synopsis.includes(searchQuery) || genres.includes(searchQuery);
+                    } else if (cat === 'manga') {
+                        return title.includes(searchQuery) || (e.author || '').toLowerCase().includes(searchQuery) || synopsis.includes(searchQuery) || genres.includes(searchQuery);
+                    } else if (cat === 'music') {
+                        return title.includes(searchQuery) || (e.artist || '').toLowerCase().includes(searchQuery) || (e.language || '').toLowerCase().includes(searchQuery);
+                    }
+                    return title.includes(searchQuery);
+                });
+            }
+
+            // Genre Filtering Engine (UNION vs INTERSECTION logic across all categories)
+            if (state.filters.genres && state.filters.genres.length > 0 && cat !== 'music') {
+                filtered = filtered.filter(e => {
+                    const entryGenres = Array.isArray(e.genres) ? e.genres : [];
+                    if (entryGenres.length === 0) return false;
+
+                    if (state.filters.genreMode === 'INTERSECTION') {
+                        // Match EVERY selected genre
+                        return state.filters.genres.every(selectedG => entryGenres.includes(selectedG));
+                    } else {
+                        // UNION mode: Match AT LEAST ONE selected genre
+                        return state.filters.genres.some(selectedG => entryGenres.includes(selectedG));
+                    }
+                });
+            }
+
+            if (state.filters.ageRating !== '') {
+                const maxAge = parseFloat(state.filters.ageRating);
+                if (!isNaN(maxAge)) {
+                    filtered = filtered.filter(e => {
+                        const itemAge = parseFloat(e.ageRating);
+                        return !isNaN(itemAge) && itemAge <= maxAge;
+                    });
+                }
+            }
+
+            if (state.filters.maxRuntime !== '' && cat === 'movies') {
+                const maxMins = parseFloat(state.filters.maxRuntime);
+                if (!isNaN(maxMins)) {
+                    filtered = filtered.filter(e => {
+                        const itemMins = parseRuntimeToMinutes(e.runtime);
+                        return itemMins > 0 && itemMins <= maxMins;
+                    });
+                }
+            }
+
+            if (state.filters.tag) {
+                filtered = filtered.filter(e => e.tag === state.filters.tag);
+            }
+
+            if (state.filters.language && cat === 'music') {
+                const langQuery = state.filters.language.trim().toLowerCase();
+                filtered = filtered.filter(e => (e.language || '').toLowerCase().includes(langQuery));
+            }
+
+            filtered.sort((a, b) => {
+                let valA = a[state.filters.sortField];
+                let valB = b[state.filters.sortField];
+
+                if (state.filters.sortField === 'installationSize') {
+                    valA = parseInstallationSizeToMB(valA);
+                    valB = parseInstallationSizeToMB(valB);
+                } else if (state.filters.sortField === 'completionTime') {
+                    valA = parseCompletionTimeToHours(valA);
+                    valB = parseCompletionTimeToHours(valB);
+                } else if (state.filters.sortField === 'runtime') {
+                    valA = parseRuntimeToMinutes(valA);
+                    valB = parseRuntimeToMinutes(valB);
+                } else if (['rating', 'ageRating', 'seasons', 'episodes', 'chapters'].includes(state.filters.sortField)) {
+                    valA = parseFloat(valA) || 0;
+                    valB = parseFloat(valB) || 0;
+                } else {
+                    if (valA === undefined || valA === null) valA = '';
+                    if (valB === undefined || valB === null) valB = '';
+                    if (typeof valA === 'string') valA = valA.toLowerCase();
+                    if (typeof valB === 'string') valB = valB.toLowerCase();
+                }
+
+                if (valA < valB) return state.filters.sortOrder === 'asc' ? -1 : 1;
+                if (valA > valB) return state.filters.sortOrder === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            state.currentFilteredEntries = filtered;
+            renderLibraryGrid(filtered);
+        }
+
+        function renderLibraryGrid(entries) {
+            const container = document.getElementById('libraryContainer');
+            const emptyState = document.getElementById('libraryEmptyState');
+
+            if (entries.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            const isMusic = state.currentCategory === 'music';
+
+            if (isMusic) {
+                container.className = "flex flex-col space-y-2 col-span-full";
+                container.innerHTML = entries.map(e => `
+                    <div onclick="openDetailView('${e.id}')" class="bg-white rounded-2xl p-4 border border-slate-200 hover:border-amber-400 hover:shadow-md transition-all flex items-center justify-between cursor-pointer">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-music"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">${escapeHtml(e.title)}</h4>
+                                <p class="text-xs text-slate-400">${escapeHtml(e.artist || 'Unknown Artist')} ${e.language ? '• ' + escapeHtml(e.language) : ''}</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 font-semibold text-xs">${escapeHtml(e.duration || '--:--')}</span>
+                    </div>
+                `).join('');
+            } else {
+                container.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4";
+                container.innerHTML = entries.map(e => {
+                    const tagObj = BUILTIN_TAGS.find(t => t.id === e.tag);
+                    const tagHtml = tagObj ? `<span class="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${tagObj.cssClass}">${tagObj.label}</span>` : '';
+                    const ratingHtml = e.rating !== null && e.rating !== undefined ? `
+                        <div class="flex items-center gap-1 bg-amber-500 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold">
+                            <i class="fa-solid fa-star"></i> ${e.rating}
+                        </div>
+                    ` : '';
+
+                    return `
+                        <div onclick="openDetailView('${e.id}')" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-amber-400 hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer relative">
+                            <div class="aspect-[2/3] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center">
+                                ${e.imageBlob ? `<img src="${e.imageBlob}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` : `
+                                    <div class="text-slate-300 text-4xl flex flex-col items-center">
+                                        <i class="fa-solid fa-image"></i>
+                                        <span class="text-[10px] mt-2 font-semibold">No Poster</span>
+                                    </div>
+                                `}
+                                ${tagHtml}
+                            </div>
+                            <div class="p-3 flex flex-col flex-1 justify-between bg-white">
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-xs sm:text-sm line-clamp-1 group-hover:text-amber-600 transition-colors">${escapeHtml(e.title)}</h4>
+                                    <p class="text-[10px] text-slate-400 mt-0.5 capitalize">${escapeHtml(e.subcategory || e.category)}</p>
+                                </div>
+                                <div class="mt-2 flex items-center justify-between">
+                                    ${ratingHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        /* ==========================================================================
+           5. ENTRY ADDING, DUPLICATE PREVENTION & EDITING
+           ========================================================================== */
+        function openAddEntryModal() {
+            state.editingEntryId = null;
+            state.selectedImageBlob = null;
+            document.getElementById('modalFormTitle').textContent = "Add Archive Entry";
+            document.getElementById('archiveForm').reset();
+            document.getElementById('formCategory').value = state.currentCategory || 'games';
+            clearSelectedImage();
+            onCategoryFormChange();
+            document.getElementById('entryModal').classList.remove('hidden');
+        }
+
+        function closeEntryModal() {
+            document.getElementById('entryModal').classList.add('hidden');
+        }
+
+        function onCategoryFormChange() {
+            const cat = document.getElementById('formCategory').value;
+            const subContainer = document.getElementById('subcategoryContainer');
+            const subSelect = document.getElementById('formSubcategory');
+            const dynamicFields = document.getElementById('dynamicFormFields');
+            const imgSection = document.getElementById('imageUploadSection');
+
+            if (cat === 'games') {
+                subContainer.classList.remove('hidden');
+                subSelect.innerHTML = `<option value="Mobile Games">Mobile Games</option><option value="PC Games">PC Games</option><option value="Console Games">Console Games</option>`;
+            } else if (cat === 'movies') {
+                subContainer.classList.remove('hidden');
+                subSelect.innerHTML = `<option value="Movies">Movies</option><option value="Anime Movies">Anime Movies</option>`;
+            } else if (cat === 'manga') {
+                subContainer.classList.remove('hidden');
+                subSelect.innerHTML = `<option value="Manga">Manga</option><option value="Manhua">Manhua</option><option value="Manhwa">Manhwa</option>`;
+            } else {
+                subContainer.classList.add('hidden');
+            }
+
+            if (cat === 'music') imgSection.classList.add('hidden');
+            else imgSection.classList.remove('hidden');
+
+            let html = '';
+
+            if (cat === 'games') {
+                html += `
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="font-bold">Developer</label><input type="text" id="fieldDeveloper" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div><label class="font-bold">Release Date</label><input type="date" id="fieldReleaseDate" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div>
+                            <label class="font-bold">Installation Size</label>
+                            <div class="flex gap-1">
+                                <input type="number" step="0.01" id="fieldSizeNum" placeholder="e.g. 45" class="w-full p-2.5 rounded-xl border border-slate-200">
+                                <select id="fieldSizeUnit" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-bold text-slate-700">
+                                    <option value="GB">GB</option>
+                                    <option value="MB">MB</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div><label class="font-bold">Age Rating</label><input type="number" id="fieldAgeRating" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div>
+                            <label class="font-bold">Single/Multiplayer</label>
+                            <select id="fieldSingleMulti" class="w-full p-2.5 rounded-xl border border-slate-200"><option value="Single-player">Single-player</option><option value="Multiplayer">Multiplayer</option><option value="Both">Both</option></select>
+                        </div>
+                        <div>
+                            <label class="font-bold">Online/Offline</label>
+                            <select id="fieldOnlineOffline" class="w-full p-2.5 rounded-xl border border-slate-200"><option value="Offline">Offline</option><option value="Online">Online</option><option value="Both">Both</option></select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="font-bold">Avg Completion Time</label>
+                            <div class="flex gap-1">
+                                <input type="number" step="0.1" id="fieldCompletionTimeNum" placeholder="e.g. 50" class="w-full p-2.5 rounded-xl border border-slate-200">
+                                <select id="fieldCompletionTimeUnit" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-bold text-slate-700">
+                                    <option value="Hours">Hours</option>
+                                    <option value="Mins">Mins</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (cat === 'movies') {
+                html += `
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="font-bold">Director</label><input type="text" id="fieldDirector" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div><label class="font-bold">Release Date</label><input type="date" id="fieldReleaseDate" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div class="col-span-2">
+                            <label class="font-bold">Theatrical Runtime</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-semibold">Hours</label>
+                                    <input type="number" min="0" max="24" id="fieldMovieHours" placeholder="e.g. 2" class="w-full p-2.5 rounded-xl border border-slate-200">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-semibold">Minutes (0 - 59)</label>
+                                    <input type="number" min="0" max="59" id="fieldMovieMins" placeholder="e.g. 15" class="w-full p-2.5 rounded-xl border border-slate-200">
+                                </div>
+                            </div>
+                        </div>
+                        <div><label class="font-bold">Age Rating</label><input type="number" id="fieldAgeRating" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                    </div>
+                `;
+            } else if (cat === 'anime' || cat === 'series') {
+                html += `
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="font-bold">Original Release Date</label><input type="date" id="fieldReleaseDate" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div><label class="font-bold">Seasons</label><input type="number" id="fieldSeasons" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div><label class="font-bold">Total Episodes</label><input type="number" id="fieldEpisodes" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div><label class="font-bold">Age Rating</label><input type="number" id="fieldAgeRating" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                    </div>
+                `;
+            } else if (cat === 'manga') {
+                html += `
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="font-bold">Author</label><input type="text" id="fieldAuthor" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div><label class="font-bold">Release Date</label><input type="date" id="fieldReleaseDate" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div><label class="font-bold">Chapters</label><input type="number" id="fieldChapters" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div><label class="font-bold">Age Rating</label><input type="number" id="fieldAgeRating" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                    </div>
+                `;
+            } else if (cat === 'music') {
+                html += `
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="font-bold">Artist / Singer</label><input type="text" id="fieldArtist" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div><label class="font-bold">Language</label><input type="text" id="fieldLanguage" class="w-full p-2.5 rounded-xl border border-slate-200"></div>
+                        <div class="col-span-2">
+                            <label class="font-bold">Duration</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-semibold">Minutes</label>
+                                    <input type="number" min="0" id="fieldMusicMins" placeholder="e.g. 3" class="w-full p-2.5 rounded-xl border border-slate-200">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-semibold">Seconds (0 - 59)</label>
+                                    <input type="number" min="0" max="59" id="fieldMusicSecs" placeholder="e.g. 45" class="w-full p-2.5 rounded-xl border border-slate-200">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (cat !== 'music') {
+                const availableGenres = cat === 'manga' ? [...GENRE_CATALOGUES.manga, ...GENRE_CATALOGUES.manhua, ...GENRE_CATALOGUES.manhwa] : GENRE_CATALOGUES[cat] || [];
+                const uniqueGenres = [...new Set(availableGenres)];
+
+                html += `
+                    <div>
+                        <label class="block font-bold mb-1">Select Genres (Multiple)</label>
+                        <div id="formGenresList" class="flex flex-wrap gap-1.5 p-2 bg-slate-50 rounded-xl border border-slate-200 max-h-24 overflow-y-auto">
+                            ${uniqueGenres.map(g => `
+                                <label class="px-2 py-1 bg-white rounded-lg border border-slate-200 text-[10px] font-semibold cursor-pointer">
+                                    <input type="checkbox" value="${g}" class="genre-checkbox mr-1"> ${g}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold mb-1">Personal Rating (0 - 10)</label>
+                            <input type="number" id="formRating" step="0.01" min="0" max="10" placeholder="e.g. 9.25" class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-amber-600">
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Built-in Tag (Max 1)</label>
+                            <select id="formTag" class="w-full p-2.5 rounded-xl border border-slate-200">
+                                <option value="">None</option>
+                                ${BUILTIN_TAGS.map(t => `<option value="${t.id}">${t.label}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold mb-1">Synopsis</label>
+                        <textarea id="formSynopsis" rows="2" class="w-full p-2.5 rounded-xl border border-slate-200"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold mb-1">Personal Review</label>
+                        <textarea id="formReview" rows="2" class="w-full p-2.5 rounded-xl border border-slate-200"></textarea>
+                    </div>
+                `;
+            }
+
+            dynamicFields.innerHTML = html;
+        }
+
+        function previewSelectedImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                state.selectedImageBlob = e.target.result;
+                const previewBox = document.getElementById('imagePreviewBox');
+                previewBox.innerHTML = `<img src="${state.selectedImageBlob}" class="w-full h-full object-cover">`;
+                document.getElementById('clearImageBtn').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearSelectedImage() {
+            state.selectedImageBlob = null;
+            document.getElementById('imagePreviewBox').innerHTML = `<i class="fa-solid fa-image text-xl"></i><span class="text-[9px] mt-1">No image</span>`;
+            document.getElementById('clearImageBtn').classList.add('hidden');
+            document.getElementById('formImageInput').value = '';
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const category = document.getElementById('formCategory').value;
+            const subcategory = document.getElementById('formSubcategory').value || category;
+            const title = document.getElementById('formTitle').value.trim();
+
+            if (!title) {
+                alert("Official title is required!");
+                return;
+            }
+
+            const normTitle = title.toLowerCase();
+            const existingDuplicate = state.allEntries.find(entry => 
+                !entry.deleted && 
+                entry.id !== state.editingEntryId && 
+                entry.category === category && 
+                (entry.subcategory || entry.category).toLowerCase() === subcategory.toLowerCase() && 
+                entry.title.trim().toLowerCase() === normTitle
+            );
+
+            if (existingDuplicate) {
+                alert(`Duplicate detected! An entry with the title "${title}" already exists in ${category} (${subcategory}). Overwriting is prohibited.`);
+                closeEntryModal();
+                openDetailView(existingDuplicate.id);
+                return;
+            }
+
+            const entryData = {
+                id: state.editingEntryId || 'entry_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                category: category,
+                subcategory: subcategory,
+                title: title,
+                timestamp: state.editingEntryId ? (state.allEntries.find(x => x.id === state.editingEntryId)?.timestamp || Date.now()) : Date.now(),
+                deleted: false,
+                imageBlob: state.selectedImageBlob
+            };
+
+            if (category !== 'music') {
+                const ratingInput = document.getElementById('formRating').value;
+                if (ratingInput !== '') {
+                    const parsedRating = parseFloat(ratingInput);
+                    if (isNaN(parsedRating) || parsedRating < 0 || parsedRating > 10) {
+                        alert("Personal rating must be a valid number between 0 and 10 (max 2 decimal places).");
+                        return;
+                    }
+                    entryData.rating = parseFloat(parsedRating.toFixed(2));
+                } else {
+                    entryData.rating = null;
+                }
+
+                entryData.tag = document.getElementById('formTag').value || null;
+                entryData.synopsis = document.getElementById('formSynopsis').value.trim();
+                entryData.review = document.getElementById('formReview').value.trim();
+
+                const checkedGenres = Array.from(document.querySelectorAll('.genre-checkbox:checked')).map(cb => cb.value);
+                entryData.genres = checkedGenres;
+            }
+
+            if (category === 'games') {
+                entryData.developer = document.getElementById('fieldDeveloper')?.value.trim();
+                entryData.releaseDate = document.getElementById('fieldReleaseDate')?.value;
+                
+                const sizeNum = document.getElementById('fieldSizeNum')?.value.trim();
+                const sizeUnit = document.getElementById('fieldSizeUnit')?.value || 'GB';
+                entryData.installationSize = sizeNum ? `${sizeNum} ${sizeUnit}` : '';
+
+                entryData.ageRating = document.getElementById('fieldAgeRating')?.value;
+                entryData.singleMulti = document.getElementById('fieldSingleMulti')?.value;
+                entryData.onlineOffline = document.getElementById('fieldOnlineOffline')?.value;
+                
+                const timeNum = document.getElementById('fieldCompletionTimeNum')?.value.trim();
+                const timeUnit = document.getElementById('fieldCompletionTimeUnit')?.value || 'Hours';
+                entryData.completionTime = timeNum ? `${timeNum} ${timeUnit}` : '';
+            } else if (category === 'movies') {
+                entryData.director = document.getElementById('fieldDirector')?.value.trim();
+                entryData.releaseDate = document.getElementById('fieldReleaseDate')?.value;
+
+                const hours = parseInt(document.getElementById('fieldMovieHours')?.value || 0, 10);
+                const mins = parseInt(document.getElementById('fieldMovieMins')?.value || 0, 10);
+                if (hours > 0 || mins > 0) {
+                    entryData.runtime = `${hours > 0 ? hours + 'h ' : ''}${mins > 0 ? mins + 'm' : ''}`.trim();
+                } else {
+                    entryData.runtime = '';
+                }
+
+                entryData.ageRating = document.getElementById('fieldAgeRating')?.value;
+            } else if (category === 'anime' || category === 'series') {
+                entryData.releaseDate = document.getElementById('fieldReleaseDate')?.value;
+                entryData.seasons = document.getElementById('fieldSeasons')?.value;
+                entryData.episodes = document.getElementById('fieldEpisodes')?.value;
+                entryData.ageRating = document.getElementById('fieldAgeRating')?.value;
+            } else if (category === 'manga') {
+                entryData.author = document.getElementById('fieldAuthor')?.value.trim();
+                entryData.releaseDate = document.getElementById('fieldReleaseDate')?.value;
+                entryData.chapters = document.getElementById('fieldChapters')?.value;
+                entryData.ageRating = document.getElementById('fieldAgeRating')?.value;
+            } else if (category === 'music') {
+                entryData.artist = document.getElementById('fieldArtist')?.value.trim();
+                entryData.language = document.getElementById('fieldLanguage')?.value.trim();
+                
+                const mins = parseInt(document.getElementById('fieldMusicMins')?.value || 0, 10);
+                const secs = parseInt(document.getElementById('fieldMusicSecs')?.value || 0, 10);
+                if (mins > 0 || secs > 0) {
+                    entryData.duration = `${mins}:${secs < 10 ? '0' + secs : secs}`;
+                } else {
+                    entryData.duration = '';
+                }
+            }
+
+            await dbSaveEntry(entryData);
+            await reloadState();
+            closeEntryModal();
+
+            if (state.currentView === 'library') {
+                applyFiltersAndSearch();
+            } else {
+                navigateTo('library', category);
+            }
+        }
+
+        function openEditModal() {
+            const entry = state.allEntries.find(e => e.id === state.currentEntryId);
+            if (!entry) return;
+
+            state.editingEntryId = entry.id;
+            state.selectedImageBlob = entry.imageBlob || null;
+
+            document.getElementById('modalFormTitle').textContent = "Edit Archive Entry";
+            document.getElementById('formCategory').value = entry.category;
+            onCategoryFormChange();
+
+            document.getElementById('formSubcategory').value = entry.subcategory || entry.category;
+            document.getElementById('formTitle').value = entry.title || '';
+
+            if (entry.imageBlob) {
+                document.getElementById('imagePreviewBox').innerHTML = `<img src="${entry.imageBlob}" class="w-full h-full object-cover">`;
+                document.getElementById('clearImageBtn').classList.remove('hidden');
+            } else {
+                clearSelectedImage();
+            }
+
+            if (entry.category !== 'music') {
+                if (entry.rating !== null && entry.rating !== undefined) document.getElementById('formRating').value = entry.rating;
+                document.getElementById('formTag').value = entry.tag || '';
+                document.getElementById('formSynopsis').value = entry.synopsis || '';
+                document.getElementById('formReview').value = entry.review || '';
+
+                if (entry.genres) {
+                    document.querySelectorAll('.genre-checkbox').forEach(cb => {
+                        cb.checked = entry.genres.includes(cb.value);
+                    });
+                }
+            }
+
+            if (entry.category === 'games') {
+                if (document.getElementById('fieldDeveloper')) document.getElementById('fieldDeveloper').value = entry.developer || '';
+                if (document.getElementById('fieldReleaseDate')) document.getElementById('fieldReleaseDate').value = entry.releaseDate || '';
+                
+                if (entry.installationSize) {
+                    const parts = entry.installationSize.split(' ');
+                    if (document.getElementById('fieldSizeNum')) document.getElementById('fieldSizeNum').value = parts[0] || '';
+                    if (document.getElementById('fieldSizeUnit')) document.getElementById('fieldSizeUnit').value = parts[1] || 'GB';
+                }
+                
+                if (document.getElementById('fieldAgeRating')) document.getElementById('fieldAgeRating').value = entry.ageRating || '';
+                if (document.getElementById('fieldSingleMulti')) document.getElementById('fieldSingleMulti').value = entry.singleMulti || 'Single-player';
+                if (document.getElementById('fieldOnlineOffline')) document.getElementById('fieldOnlineOffline').value = entry.onlineOffline || 'Offline';
+                
+                if (entry.completionTime) {
+                    const parts = entry.completionTime.split(' ');
+                    if (document.getElementById('fieldCompletionTimeNum')) document.getElementById('fieldCompletionTimeNum').value = parts[0] || '';
+                    if (document.getElementById('fieldCompletionTimeUnit')) document.getElementById('fieldCompletionTimeUnit').value = parts[1] || 'Hours';
+                }
+            } else if (entry.category === 'movies') {
+                if (document.getElementById('fieldDirector')) document.getElementById('fieldDirector').value = entry.director || '';
+                if (document.getElementById('fieldReleaseDate')) document.getElementById('fieldReleaseDate').value = entry.releaseDate || '';
+
+                if (entry.runtime) {
+                    const hMatch = entry.runtime.match(/(\d+)\s*h/);
+                    const mMatch = entry.runtime.match(/(\d+)\s*m/);
+                    if (document.getElementById('fieldMovieHours')) document.getElementById('fieldMovieHours').value = hMatch ? hMatch[1] : '';
+                    if (document.getElementById('fieldMovieMins')) document.getElementById('fieldMovieMins').value = mMatch ? mMatch[1] : '';
+                }
+
+                if (document.getElementById('fieldAgeRating')) document.getElementById('fieldAgeRating').value = entry.ageRating || '';
+            } else if (entry.category === 'anime' || entry.category === 'series') {
+                if (document.getElementById('fieldReleaseDate')) document.getElementById('fieldReleaseDate').value = entry.releaseDate || '';
+                if (document.getElementById('fieldSeasons')) document.getElementById('fieldSeasons').value = entry.seasons || '';
+                if (document.getElementById('fieldEpisodes')) document.getElementById('fieldEpisodes').value = entry.episodes || '';
+                if (document.getElementById('fieldAgeRating')) document.getElementById('fieldAgeRating').value = entry.ageRating || '';
+            } else if (entry.category === 'manga') {
+                if (document.getElementById('fieldAuthor')) document.getElementById('fieldAuthor').value = entry.author || '';
+                if (document.getElementById('fieldReleaseDate')) document.getElementById('fieldReleaseDate').value = entry.releaseDate || '';
+                if (document.getElementById('fieldChapters')) document.getElementById('fieldChapters').value = entry.chapters || '';
+                if (document.getElementById('fieldAgeRating')) document.getElementById('fieldAgeRating').value = entry.ageRating || '';
+            } else if (entry.category === 'music') {
+                if (document.getElementById('fieldArtist')) document.getElementById('fieldArtist').value = entry.artist || '';
+                if (document.getElementById('fieldLanguage')) document.getElementById('fieldLanguage').value = entry.language || '';
+                
+                if (entry.duration) {
+                    const parts = entry.duration.split(':');
+                    if (document.getElementById('fieldMusicMins')) document.getElementById('fieldMusicMins').value = parts[0] ? parseInt(parts[0], 10) : '';
+                    if (document.getElementById('fieldMusicSecs')) document.getElementById('fieldMusicSecs').value = parts[1] ? parseInt(parts[1], 10) : '';
+                }
+            }
+
+            document.getElementById('entryModal').classList.remove('hidden');
+        }
+
+        /* ==========================================================================
+           6. DETAIL PAGE VIEW & SWIPE NAVIGATION
+           ========================================================================== */
+        function openDetailView(id) {
+            state.currentEntryId = id;
+            navigateTo('detail');
+        }
+
+        function navigateDetailEntry(direction) {
+            if (state.currentView !== 'detail' || !state.currentFilteredEntries.length) return;
+            const currentIndex = state.currentFilteredEntries.findIndex(e => e.id === state.currentEntryId);
+            if (currentIndex === -1) return;
+
+            const nextIndex = currentIndex + direction;
+            if (nextIndex >= 0 && nextIndex < state.currentFilteredEntries.length) {
+                state.currentEntryId = state.currentFilteredEntries[nextIndex].id;
+                renderDetailView();
+            }
+        }
+
+        function setupSwipeAndKeyNavigation() {
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            const detailContainer = document.getElementById('view-detail');
+
+            detailContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, { passive: true });
+
+            detailContainer.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].screenX;
+                const touchEndY = e.changedTouches[0].screenY;
+                const diffX = touchEndX - touchStartX;
+                const diffY = touchEndY - touchStartY;
+
+                if (Math.abs(diffX) > 60 && Math.abs(diffY) < 50) {
+                    if (diffX < 0) {
+                        navigateDetailEntry(1);
+                    } else {
+                        navigateDetailEntry(-1);
+                    }
+                }
+            }, { passive: true });
+
+            document.addEventListener('keydown', (e) => {
+                if (state.currentView === 'detail') {
+                    if (e.key === 'ArrowRight') navigateDetailEntry(1);
+                    if (e.key === 'ArrowLeft') navigateDetailEntry(-1);
+                }
+            });
+        }
+
+        function renderDetailView() {
+            const container = document.getElementById('detailContentContainer');
+            const entry = state.allEntries.find(e => e.id === state.currentEntryId);
+
+            if (!entry) {
+                container.innerHTML = `<p class="text-center text-slate-400">Entry not found.</p>`;
+                return;
+            }
+
+            const isMusic = entry.category === 'music';
+            const tagObj = BUILTIN_TAGS.find(t => t.id === entry.tag);
+            const tagBadgeHtml = tagObj ? `<span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase ${tagObj.cssClass}">${tagObj.label}</span>` : '';
+
+            let detailsHtml = `
+                <div class="flex flex-col md:flex-row gap-6">
+            `;
+
+            if (!isMusic) {
+                detailsHtml += `
+                    <div class="w-full md:w-64 aspect-[2/3] rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                        ${entry.imageBlob ? `<img src="${entry.imageBlob}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-image text-slate-300 text-5xl"></i>`}
+                    </div>
+                `;
+            }
+
+            detailsHtml += `
+                <div class="flex-1 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-wider">${escapeHtml(entry.subcategory || entry.category)}</span>
+                            <h2 class="text-2xl font-extrabold text-slate-800 mt-1">${escapeHtml(entry.title)}</h2>
+                        </div>
+                        ${tagBadgeHtml}
+                    </div>
+            `;
+
+            if (entry.rating !== null && entry.rating !== undefined) {
+                detailsHtml += `
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500 text-white font-bold text-sm shadow-md shadow-amber-500/20">
+                        <i class="fa-solid fa-star text-amber-200"></i>
+                        <span>Personal Rating: ${entry.rating} / 10</span>
+                    </div>
+                `;
+            }
+
+            detailsHtml += `<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-200">`;
+
+            if (entry.category === 'games') {
+                detailsHtml += `<div><span class="text-slate-400 block">Developer</span><strong class="text-slate-700">${escapeHtml(entry.developer || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Release Date</span><strong class="text-slate-700">${escapeHtml(entry.releaseDate || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Installation Size</span><strong class="text-slate-700">${escapeHtml(entry.installationSize || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Age Rating</span><strong class="text-slate-700">${escapeHtml(entry.ageRating || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Mode</span><strong class="text-slate-700">${escapeHtml(entry.singleMulti || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Connectivity</span><strong class="text-slate-700">${escapeHtml(entry.onlineOffline || 'N/A')}</strong></div>`;
+                detailsHtml += `<div class="col-span-2"><span class="text-slate-400 block">Avg Completion Time</span><strong class="text-slate-700">${escapeHtml(entry.completionTime || 'N/A')}</strong></div>`;
+            } else if (entry.category === 'movies') {
+                detailsHtml += `<div><span class="text-slate-400 block">Director</span><strong class="text-slate-700">${escapeHtml(entry.director || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Release Date</span><strong class="text-slate-700">${escapeHtml(entry.releaseDate || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Runtime</span><strong class="text-slate-700">${escapeHtml(entry.runtime || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Age Rating</span><strong class="text-slate-700">${escapeHtml(entry.ageRating || 'N/A')}</strong></div>`;
+            } else if (entry.category === 'anime' || entry.category === 'series') {
+                detailsHtml += `<div><span class="text-slate-400 block">Release Date</span><strong class="text-slate-700">${escapeHtml(entry.releaseDate || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Seasons</span><strong class="text-slate-700">${escapeHtml(entry.seasons || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Total Episodes</span><strong class="text-slate-700">${escapeHtml(entry.episodes || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Age Rating</span><strong class="text-slate-700">${escapeHtml(entry.ageRating || 'N/A')}</strong></div>`;
+            } else if (entry.category === 'manga') {
+                detailsHtml += `<div><span class="text-slate-400 block">Author</span><strong class="text-slate-700">${escapeHtml(entry.author || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Release Date</span><strong class="text-slate-700">${escapeHtml(entry.releaseDate || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Chapters</span><strong class="text-slate-700">${escapeHtml(entry.chapters || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Age Rating</span><strong class="text-slate-700">${escapeHtml(entry.ageRating || 'N/A')}</strong></div>`;
+            } else if (entry.category === 'music') {
+                detailsHtml += `<div><span class="text-slate-400 block">Artist / Singer</span><strong class="text-slate-700">${escapeHtml(entry.artist || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Language</span><strong class="text-slate-700">${escapeHtml(entry.language || 'N/A')}</strong></div>`;
+                detailsHtml += `<div><span class="text-slate-400 block">Duration</span><strong class="text-slate-700">${escapeHtml(entry.duration || 'N/A')}</strong></div>`;
+            }
+
+            detailsHtml += `</div>`;
+
+            if (entry.genres && entry.genres.length > 0) {
+                detailsHtml += `
+                    <div>
+                        <h4 class="font-bold text-xs text-slate-700 mb-1.5">Assigned Genres</h4>
+                        <div class="flex flex-wrap gap-1">
+                            ${entry.genres.map(g => `<span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-semibold text-[10px]">${escapeHtml(g)}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (entry.synopsis) {
+                detailsHtml += `
+                    <div class="space-y-1">
+                        <h4 class="font-bold text-xs text-slate-700">Synopsis</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">${escapeHtml(entry.synopsis)}</p>
+                    </div>
+                `;
+            }
+
+            if (entry.review) {
+                detailsHtml += `
+                    <div class="space-y-1">
+                        <h4 class="font-bold text-xs text-amber-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-comment-dots"></i> Personal Review
+                        </h4>
+                        <p class="text-xs text-slate-700 leading-relaxed bg-amber-50/60 p-3.5 rounded-xl border border-amber-200/60">${escapeHtml(entry.review)}</p>
+                    </div>
+                `;
+            }
+
+            detailsHtml += `
+                </div>
+                </div>
+            `;
+
+            container.innerHTML = detailsHtml;
+        }
+
+        /* ==========================================================================
+           7. RECYCLE BIN & DELETION SYSTEM
+           ========================================================================== */
+        async function moveToRecycleBinCurrent() {
+            if (!state.currentEntryId) return;
+            const entry = state.allEntries.find(e => e.id === state.currentEntryId);
+            if (!entry) return;
+
+            entry.deleted = true;
+            await dbSaveEntry(entry);
+            await reloadState();
+            navigateBackToLibrary();
+        }
+
+        function openRecycleBinView() {
+            closeSettingsModal();
+            renderRecycleBinList();
+            document.getElementById('recycleBinModal').classList.remove('hidden');
+        }
+
+        function closeRecycleBinModal() {
+            document.getElementById('recycleBinModal').classList.add('hidden');
+        }
+
+        function renderRecycleBinList() {
+            const container = document.getElementById('recycleBinListContainer');
+            const deletedEntries = state.allEntries.filter(e => e.deleted);
+
+            if (deletedEntries.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 py-8">Recycle Bin is empty.</p>`;
+                return;
+            }
+
+            container.innerHTML = deletedEntries.map(e => `
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-slate-800">${escapeHtml(e.title)}</h4>
+                        <p class="text-[10px] text-slate-400 capitalize">${escapeHtml(e.subcategory || e.category)}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="restoreRecycleEntry('${e.id}')" class="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg font-bold border border-emerald-200 hover:bg-emerald-100 transition-colors">
+                            Restore
+                        </button>
+                        <button onclick="permanentlyDeleteEntry('${e.id}')" class="px-3 py-1.5 bg-rose-50 text-rose-700 rounded-lg font-bold border border-rose-200 hover:bg-rose-100 transition-colors">
+                            Delete Permanently
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function restoreRecycleEntry(id) {
+            const entry = state.allEntries.find(e => e.id === id);
+            if (!entry) return;
+            entry.deleted = false;
+            await dbSaveEntry(entry);
+            await reloadState();
+            renderRecycleBinList();
+        }
+
+        async function permanentlyDeleteEntry(id) {
+            state.pendingDeleteId = id;
+            const modal = document.getElementById('deleteConfirmModal');
+            const confirmBtn = document.getElementById('confirmDeleteActionBtn');
+
+            confirmBtn.onclick = async function() {
+                if (!state.pendingDeleteId) return;
+                try {
+                    await dbDeleteEntry(state.pendingDeleteId);
+                    state.pendingDeleteId = null;
+                    closeDeleteConfirmModal();
+                    await reloadState();
+                    renderRecycleBinList();
+                } catch (err) {
+                    alert("Failed to delete entry permanently: " + err.message);
+                }
+            };
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeDeleteConfirmModal() {
+            document.getElementById('deleteConfirmModal').classList.add('hidden');
+            state.pendingDeleteId = null;
+        }
+
+        /* ==========================================================================
+           8. EXPORT, IMPORT, BACKUP & RESTORE (ZIP ENGINE)
+           ========================================================================== */
+        function openSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        async function triggerFullBackup() {
+            const zip = new JSZip();
+            const exportManifest = {
+                version: "1.0.0",
+                backupDate: new Date().toISOString(),
+                type: "FULL_BACKUP",
+                entries: state.allEntries
+            };
+
+            zip.file("manifest.json", JSON.stringify(exportManifest, null, 2));
+            const blob = await zip.generateAsync({ type: "blob" });
+            downloadFile(blob, `ArchiveVault_Backup_${Date.now()}.zip`);
+        }
+
+        async function triggerCategoryExport() {
+            const cat = state.currentCategory || 'games';
+            const catEntries = state.allEntries.filter(e => !e.deleted && e.category === cat);
+
+            const zip = new JSZip();
+            const exportManifest = {
+                version: "1.0.0",
+                exportDate: new Date().toISOString(),
+                type: "CATEGORY_EXPORT",
+                category: cat,
+                entries: catEntries
+            };
+
+            zip.file("manifest.json", JSON.stringify(exportManifest, null, 2));
+            const blob = await zip.generateAsync({ type: "blob" });
+            downloadFile(blob, `ArchiveVault_Export_${cat}_${Date.now()}.zip`);
+        }
+
+        async function handleImportFile(event) {
+            const input = event.target;
+            const file = input.files[0];
+            if (!file) return;
+
+            try {
+                const zip = await JSZip.loadAsync(file);
+                const manifestFile = zip.file("manifest.json");
+                if (!manifestFile) {
+                    alert("Invalid Archive ZIP format. Missing manifest.json file.");
+                    input.value = '';
+                    return;
+                }
+
+                const manifestText = await manifestFile.async("text");
+                const manifest = JSON.parse(manifestText);
+                const importedEntries = manifest.entries || [];
+
+                let importedCount = 0;
+                let skippedCount = 0;
+
+                for (const item of importedEntries) {
+                    const normTitle = (item.title || '').trim().toLowerCase();
+                    const subcat = (item.subcategory || item.category || '').toLowerCase();
+
+                    const duplicate = state.allEntries.find(e => 
+                        e.category === item.category && 
+                        (e.subcategory || e.category).toLowerCase() === subcat && 
+                        e.title.trim().toLowerCase() === normTitle
+                    );
+
+                    if (duplicate) {
+                        skippedCount++;
+                    } else {
+                        if (!item.timestamp) item.timestamp = Date.now();
+                        item.deleted = false;
+                        await dbSaveEntry(item);
+                        importedCount++;
+                    }
+                }
+
+                await reloadState();
+                alert(`Import Complete!\n\nImported: ${importedCount} entries\nSkipped (Duplicates): ${skippedCount} entries`);
+                input.value = '';
+                closeSettingsModal();
+                if (state.currentView === 'library') applyFiltersAndSearch();
+            } catch (err) {
+                alert("Failed to import archive ZIP file: " + err.message);
+                input.value = '';
+            }
+        }
+
+        async function handleRestoreFile(event) {
+            const input = event.target;
+            const file = input.files[0];
+            if (!file) return;
+
+            if (!confirm("WARNING: Restoration will REPLACE your entire current library with the backup contents. A temporary safety backup will be created automatically. Proceed?")) {
+                input.value = '';
+                return;
+            }
+
+            let currentDataBackup = [];
+            try {
+                const zip = await JSZip.loadAsync(file);
+                const manifestFile = zip.file("manifest.json");
+                if (!manifestFile) {
+                    alert("Invalid backup package. Missing manifest.json.");
+                    input.value = '';
+                    return;
+                }
+
+                const manifestText = await manifestFile.async("text");
+                const manifest = JSON.parse(manifestText);
+
+                currentDataBackup = [...state.allEntries];
+
+                await dbClearAllEntries();
+
+                for (const item of (manifest.entries || [])) {
+                    await dbSaveEntry(item);
+                }
+
+                await reloadState();
+                alert("Restoration completed successfully!");
+                input.value = '';
+                closeSettingsModal();
+                navigateTo('home');
+
+            } catch (err) {
+                alert("Restoration failed! Reverting back to original library data safety snapshot...");
+                try {
+                    await dbClearAllEntries();
+                    for (const item of currentDataBackup) {
+                        await dbSaveEntry(item);
+                    }
+                    await reloadState();
+                } catch (revertErr) {
+                    console.error("Failed to restore snapshot:", revertErr);
+                }
+                input.value = '';
+            }
+        }
+
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>
+```
