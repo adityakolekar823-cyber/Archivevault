@@ -1,0 +1,13 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Archivevault",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Vault",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "id": "Archivevault",
+  "description": "Offline games and media archive."
+}
